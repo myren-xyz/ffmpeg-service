@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -12,7 +11,7 @@ var (
 	fullUrlFile string
 )
 
-func download(url string) {
+func download(url string) error {
 
 	fullUrlFile = url
 	fileName = "inp.mp3"
@@ -21,24 +20,31 @@ func download(url string) {
 	file := createFile()
 
 	// Put content on file
-	putFile(file, httpClient())
-
+	err := putFile(file, httpClient())
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func putFile(file *os.File, client *http.Client) {
+func putFile(file *os.File, client *http.Client) error {
 	resp, err := client.Get(fullUrlFile)
 
-	checkError(err)
+	if err != nil {
+		return err
+	}
 
 	defer resp.Body.Close()
 
-	size, err := io.Copy(file, resp.Body)
+	_, err = io.Copy(file, resp.Body)
 
 	defer file.Close()
 
-	checkError(err)
+	if err != nil {
+		return err
+	}
 
-	fmt.Printf("Downloaded a file %s with size %d\n", fileName, size)
+	return nil
 }
 
 func httpClient() *http.Client {
