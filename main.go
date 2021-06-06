@@ -18,5 +18,9 @@ func convertRoute(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "error while downloading file")
 		return
 	}
-	convert()
+	err = convert()
+	if err != nil {
+		fmt.Fprintf(w, "error while converting file")
+		return
+	}
 }
