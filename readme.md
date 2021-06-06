@@ -4,4 +4,4 @@
 
 - [x] download mp3 file from s2rj
 - [x] convert to hls
-- [ ] upload to s2rj
+- [ ] put all generated files in a directory the upload them
