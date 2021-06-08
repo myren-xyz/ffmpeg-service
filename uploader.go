@@ -3,12 +3,24 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 )
 
 func upload() {
-	file, err := os.Open("./filename.ext")
+	files, err := ioutil.ReadDir("./temp")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, file := range files {
+		uploadSingle(file.Name())
+	}
+}
+
+func uploadSingle(path string) {
+	file, err := os.Open("./temp/" + path)
 	if err != nil {
 		panic(err)
 	}

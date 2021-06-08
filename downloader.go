@@ -59,8 +59,7 @@ func httpClient() *http.Client {
 }
 
 func createFile() *os.File {
-	file, err := os.Create(fileName)
-
+	file, err := os.Create("./temp/" + fileName)
 	checkError(err)
 	return file
 }
