@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"bytes"
 	"io/ioutil"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"os"
 )
@@ -19,18 +20,33 @@ func upload() {
 	}
 }
 
-func uploadSingle(path string) {
+func uploadSingle(path string) (*http.Request, error) {
 	file, err := os.Open("./temp/" + path)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	defer file.Close()
-
-	res, err := http.Post("http://127.0.0.1:5050/upload", "multipart/form-data", file)
+	fileContents, err := ioutil.ReadAll(file)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	defer res.Body.Close()
-	message, _ := ioutil.ReadAll(res.Body)
-	fmt.Printf(string(message))
+	fi, err := file.Stat()
+	if err != nil {
+		return nil, err
+	}
+	file.Close()
+
+	body := new(bytes.Buffer)
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile("track", fi.Name())
+	if err != nil {
+		return nil, err
+	}
+	part.Write(fileContents)
+
+	err = writer.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	return http.NewRequest("POST", "http://localhost:2121/upload", body)
 }
