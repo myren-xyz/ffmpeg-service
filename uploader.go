@@ -17,6 +17,9 @@ func upload() {
 	}
 
 	for _, file := range files {
+		if file.Name() == "inp.mp3" {
+			continue
+		}
 		request, err := uploadSingle(file.Name())
 		if err != nil {
 			log.Fatal(err)
