@@ -68,6 +68,6 @@ func uploadSingle(path string) (*http.Request, error) {
 
 	req, err := http.NewRequest("POST", "http://localhost:2121/upload", body)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
-	req.Header.Set("s2rj-access-token", "this is for audiofy! alan is here, I mean turing")
+	req.Header.Set("s2rj-access-token", config.AccessToken)
 	return req, err
 }
