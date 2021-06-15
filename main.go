@@ -30,7 +30,7 @@ func main() {
 	// download("http://dl6.shirazsong.in/dl/music/99-11/Mehdi%20Jahani%20-%20Asemoone%20Mani.mp3")
 	// http.HandleFunc("/api/v1/convert", convertRoute)
 	// http.ListenAndServe(":80", nil)
-	upload()
+	// upload()
 }
 
 func convertRoute(w http.ResponseWriter, r *http.Request) {
