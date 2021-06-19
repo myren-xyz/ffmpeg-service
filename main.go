@@ -35,6 +35,9 @@ func main() {
 
 func convertRoute(w http.ResponseWriter, r *http.Request) {
 	fileUrl := r.URL.Query().Get("file_url")
+	// issuer should be passed when converting and uploading has been finished
+	_ = r.URL.Query().Get("issuer")
+
 	err := download(fileUrl)
 	if err != nil {
 		fmt.Fprintf(w, "error while downloading file")
