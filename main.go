@@ -7,10 +7,6 @@ import (
 	"net/http"
 )
 
-type Config struct {
-	AccessToken string `json:"access_token"`
-}
-
 var config Config
 
 func init() {
