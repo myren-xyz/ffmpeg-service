@@ -5,11 +5,7 @@ type Config struct {
 }
 
 type Job struct {
-	ID     uint
-	Status string
-	Events chan *Event
-}
-
-type Event struct {
-	Message string
+	Status  chan string
+	Notify  chan string
+	KillSig chan bool
 }
