@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"math/rand"
 	"os/exec"
+	"time"
 )
 
 func generateSeq(length int) string {
+	rand.Seed(time.Now().UnixNano())
 	seq := "1324657890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	gen := ""
 	for i := 0; i < length; i++ {
