@@ -31,7 +31,10 @@ func upload(jobID string) {
 		client := &http.Client{}
 		resp, err := client.Do(request)
 		if err != nil {
-			log.Fatal(err)
+			j := jobs[jobID]
+			passToChannel(&j, "failed uploading")
+			killSig(&j)
+			return
 		} else {
 			var bodyContent []byte
 			resp.Body.Read(bodyContent)
