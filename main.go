@@ -24,7 +24,7 @@ func init() {
 }
 
 func main() {
-	// download("http://dl6.shirazsong.in/dl/music/99-11/Mehdi%20Jahani%20-%20Asemoone%20Mani.mp3")
+	prune()
 	http.HandleFunc("/api/v1/convert", convertRoute)
 	http.HandleFunc("/api/v1/subscribe", subscribe)
 	http.ListenAndServe(":8000", nil)

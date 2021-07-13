@@ -44,6 +44,7 @@ func startAct(url string, jobID string) {
 				go upload(jobID)
 			}
 		case <-jobs[jobID].KillSig:
+			prune()
 			break
 		}
 	}
