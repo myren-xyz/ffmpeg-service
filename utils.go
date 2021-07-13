@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
+	"os/exec"
 )
 
 func generateSeq(length int) string {
@@ -44,5 +46,13 @@ func startAct(url string, jobID string) {
 		case <-jobs[jobID].KillSig:
 			break
 		}
+	}
+}
+
+func prune() {
+	cmd := exec.Command("/bin/sh", "-c", "rm -rf ./temp/*")
+	_, err := cmd.Output()
+	if err != nil {
+		fmt.Println(err)
 	}
 }
