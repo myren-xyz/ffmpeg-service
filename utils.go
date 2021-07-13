@@ -14,3 +14,7 @@ func generateSeq(length int) string {
 	}
 	return gen
 }
+
+func passToChannel(job *Job, data string) {
+	go func() { job.Status <- &data }()
+}
