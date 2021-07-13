@@ -10,7 +10,8 @@ import (
 	"os"
 )
 
-func upload() {
+func upload(jobID string) {
+
 	files, err := ioutil.ReadDir("./temp")
 	if err != nil {
 		log.Fatal(err)
@@ -22,7 +23,10 @@ func upload() {
 		}
 		request, err := uploadSingle(file.Name())
 		if err != nil {
-			log.Fatal(err)
+			j := jobs[jobID]
+			passToChannel(&j, "failed uploading")
+			killSig(&j)
+			return
 		}
 		client := &http.Client{}
 		resp, err := client.Do(request)
@@ -30,13 +34,15 @@ func upload() {
 			log.Fatal(err)
 		} else {
 			var bodyContent []byte
-			fmt.Println(resp.StatusCode)
-			fmt.Println(resp.Header)
 			resp.Body.Read(bodyContent)
 			resp.Body.Close()
 			fmt.Println(bodyContent)
 		}
 	}
+
+	j := jobs[jobID]
+	passToChannel(&j, "uploaded")
+
 }
 
 func uploadSingle(path string) (*http.Request, error) {
