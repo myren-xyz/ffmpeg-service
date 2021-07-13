@@ -11,8 +11,7 @@ var (
 	fullUrlFile string
 )
 
-func download(url string) error {
-
+func download(url string, jobID string) {
 	fullUrlFile = url
 	fileName = "inp.mp3"
 
@@ -22,9 +21,14 @@ func download(url string) error {
 	// Put content on file
 	err := putFile(file, httpClient())
 	if err != nil {
-		return err
+		j := jobs[jobID]
+		passToChannel(&j, "failed fetching")
+		killSig(&j)
+		return
 	}
-	return nil
+
+	j := jobs[jobID]
+	passToChannel(&j, "fetched")
 }
 
 func putFile(file *os.File, client *http.Client) error {
