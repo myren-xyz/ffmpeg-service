@@ -1,11 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"os/exec"
 )
 
 func convertFile(jobID string) {
-	cmd := exec.Command("./ffmpeg", "-i", "./temp/inp.mp3", "-c:a", "libmp3lame", "-b:a", "320k", "-map", "0:0", "-f", "segment", "-segment_time", "10", "-segment_list", "./temp/outputlist.m3u8", "-segment_format", "mpegts", "./temp/output%03d.ts")
+	audioPath := fmt.Sprintf("./%s/inp.mp3", jobID)
+	m3u8 := fmt.Sprintf("./%s/outputlist.m3u8", jobID)
+	ts := "./" + jobID + "/output%03d.ts"
+	cmd := exec.Command("./ffmpeg", "-i", audioPath, "-c:a", "libmp3lame", "-b:a", "320k", "-map", "0:0", "-f", "segment", "-segment_time", "10", "-segment_list", m3u8, "-segment_format", "mpegts", ts)
 	_, err := cmd.Output()
 
 	if err != nil {
