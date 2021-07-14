@@ -12,7 +12,7 @@ import (
 
 func upload(jobID string, issuedBy string, uploadPath string) {
 
-	files, err := ioutil.ReadDir("./temp")
+	files, err := ioutil.ReadDir("./" + jobID)
 	if err != nil {
 		log.Fatal(err)
 	}
