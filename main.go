@@ -24,7 +24,6 @@ func init() {
 }
 
 func main() {
-	prune()
 	http.HandleFunc("/api/v1/convert", convertRoute)
 	http.HandleFunc("/api/v1/subscribe", subscribe)
 	http.ListenAndServe(":8080", nil)
