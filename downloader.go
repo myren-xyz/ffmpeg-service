@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -16,10 +17,18 @@ func download(url string, jobID string) {
 	fileName = "inp.mp3"
 
 	// Create blank file
-	file := createFile()
+	err := createDir(jobID)
+	if err != nil {
+		j := jobs[jobID]
+		passToChannel(&j, "failed fetching")
+		killSig(&j)
+		return
+	}
+
+	file := createFile(jobID)
 
 	// Put content on file
-	err := putFile(file, httpClient())
+	err = putFile(file, httpClient())
 	if err != nil {
 		j := jobs[jobID]
 		passToChannel(&j, "failed fetching")
@@ -62,8 +71,9 @@ func httpClient() *http.Client {
 	return &client
 }
 
-func createFile() *os.File {
-	file, err := os.Create("./temp/" + fileName)
+func createFile(path string) *os.File {
+	newPath := fmt.Sprintf("./%s/", path)
+	file, err := os.Create(newPath + fileName)
 	checkError(err)
 	return file
 }
