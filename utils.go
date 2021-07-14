@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"os"
 	"os/exec"
 	"time"
 )
@@ -46,16 +47,26 @@ func startAct(url string, jobID string, issuedBy string, uploadPath string) {
 				go upload(jobID, issuedBy, uploadPath)
 			}
 		case <-jobs[jobID].KillSig:
-			prune()
+			prune(jobID)
+			delete(jobs, jobID)
 			break
 		}
 	}
 }
 
-func prune() {
-	cmd := exec.Command("/bin/sh", "-c", "rm -rf ./temp/*")
+func prune(path string) {
+	cmdStr := fmt.Sprintf("rm -rf ./%s", path)
+	cmd := exec.Command("/bin/sh", "-c", cmdStr)
 	_, err := cmd.Output()
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+func createDir(name string) error {
+	err := os.Mkdir(name, 0755)
+	if err != nil {
+		return err
+	}
+	return nil
 }
