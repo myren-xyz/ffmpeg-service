@@ -25,7 +25,6 @@ func convertRoute(w http.ResponseWriter, r *http.Request) {
 	j := jobs[newJobID]
 	passToChannel(&j, "inq")
 	fmt.Fprintf(w, newJobID)
-
 }
 
 func subscribe(w http.ResponseWriter, r *http.Request) {
@@ -39,13 +38,11 @@ func subscribe(w http.ResponseWriter, r *http.Request) {
 	jobID := r.URL.Query().Get("job_id")
 	// if jobs[jobID] == (Job{}) {
 	// 	// no jobs availavle with this jobID
-
 	// }
 	select {
 	case e := <-jobs[jobID].Notify:
 		mar, _ := json.Marshal(e)
 		fmt.Fprintf(w, "data: %s\n\n", string(mar))
-		fmt.Printf("%v\n", string(mar))
 	}
 
 	if f, ok := w.(http.Flusher); ok {
