@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-func upload(jobID string) {
+func upload(jobID string, issuedBy string, uploadPath string) {
 
 	files, err := ioutil.ReadDir("./temp")
 	if err != nil {
@@ -21,7 +21,7 @@ func upload(jobID string) {
 		if file.Name() == "inp.mp3" {
 			continue
 		}
-		request, err := uploadSingle(file.Name())
+		request, err := uploadSingle(file.Name(), issuedBy, uploadPath)
 		if err != nil {
 			j := jobs[jobID]
 			passToChannel(&j, "failed uploading")
@@ -48,7 +48,7 @@ func upload(jobID string) {
 
 }
 
-func uploadSingle(path string) (*http.Request, error) {
+func uploadSingle(path string, issuedBy string, uploadPath string) (*http.Request, error) {
 	file, err := os.Open("./temp/" + path)
 	if err != nil {
 		return nil, err
@@ -74,8 +74,8 @@ func uploadSingle(path string) (*http.Request, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	req, err := http.NewRequest("POST", "http://localhost:2121/upload", body)
+	url := fmt.Sprintf("https://s2rj.myren.xyz/api/v1/upload?issued_by=%s&path=%s", issuedBy, uploadPath)
+	req, err := http.NewRequest("POST", url, body)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 	req.Header.Add("s2rj-access-token", config.AccessToken)
 	return req, err

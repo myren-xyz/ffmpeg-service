@@ -10,7 +10,8 @@ func convertRoute(w http.ResponseWriter, r *http.Request) {
 	fileUrl := r.URL.Query().Get("file_url")
 	// issuer should be passed when converting and uploading has been finished
 	// should return job id
-	_ = r.URL.Query().Get("issuer")
+	uploadPath := r.URL.Query().Get("upload_path")
+	issuer := r.URL.Query().Get("issuer")
 	newJobID := generateSeq(6)
 	job := Job{
 		Status:  make(chan string, 1),
@@ -18,7 +19,7 @@ func convertRoute(w http.ResponseWriter, r *http.Request) {
 		KillSig: make(chan bool, 1),
 	}
 
-	go startAct(fileUrl, newJobID)
+	go startAct(fileUrl, newJobID, issuer, uploadPath)
 
 	jobs[newJobID] = job
 	j := jobs[newJobID]
