@@ -24,7 +24,12 @@ func convertRoute(w http.ResponseWriter, r *http.Request) {
 	jobs[newJobID] = job
 	j := jobs[newJobID]
 	passToChannel(&j, "inq")
-	fmt.Fprintf(w, newJobID)
+
+	res := Response{
+		OK:    true,
+		JobID: newJobID,
+	}
+	fmt.Fprintf(w, res.toStr())
 }
 
 func subscribe(w http.ResponseWriter, r *http.Request) {
