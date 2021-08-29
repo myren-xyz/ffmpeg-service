@@ -8,6 +8,13 @@ import (
 
 func convertRoute(w http.ResponseWriter, r *http.Request) {
 	fileUrl := r.URL.Query().Get("file_url")
+	// tmpMAID cookie
+	tmpMAIDcookie, err := r.Cookie("tmpMAID")
+	if err != nil {
+		fmt.Println("Error getting tmpMAID cookie: ", err)
+		return
+	}
+
 	// issuer should be passed when converting and uploading has been finished
 	// should return job id
 	uploadPath := r.URL.Query().Get("upload_path")
@@ -19,7 +26,7 @@ func convertRoute(w http.ResponseWriter, r *http.Request) {
 		KillSig: make(chan bool, 1),
 	}
 
-	go startAct(fileUrl, newJobID, issuer, uploadPath)
+	go startAct(fileUrl, newJobID, issuer, uploadPath, tmpMAIDcookie)
 
 	jobs[newJobID] = job
 	j := jobs[newJobID]
@@ -29,7 +36,7 @@ func convertRoute(w http.ResponseWriter, r *http.Request) {
 		OK:    true,
 		JobID: newJobID,
 	}
-	fmt.Fprintf(w, res.toStr())
+	fmt.Fprint(w, res.toStr())
 }
 
 func subscribe(w http.ResponseWriter, r *http.Request) {

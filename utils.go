@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"net/http"
 	"os"
 	"os/exec"
 	"time"
@@ -35,7 +36,7 @@ func killSig(job *Job) {
 	}()
 }
 
-func startAct(url string, jobID string, issuedBy string, uploadPath string) {
+func startAct(url string, jobID string, issuedBy string, uploadPath string, cookie *http.Cookie) {
 	for {
 		select {
 		case status := <-jobs[jobID].Status:
@@ -44,12 +45,11 @@ func startAct(url string, jobID string, issuedBy string, uploadPath string) {
 			} else if status == "fetched" {
 				go convertFile(jobID)
 			} else if status == "converted" {
-				go upload(jobID, issuedBy, uploadPath)
+				go upload(jobID, issuedBy, uploadPath, cookie)
 			}
 		case <-jobs[jobID].KillSig:
 			prune(jobID)
 			delete(jobs, jobID)
-			break
 		}
 	}
 }

@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-func upload(jobID string, issuedBy string, uploadPath string) {
+func upload(jobID string, issuedBy string, uploadPath string, cookie *http.Cookie) {
 
 	files, err := ioutil.ReadDir("./" + jobID)
 	if err != nil {
@@ -21,7 +21,7 @@ func upload(jobID string, issuedBy string, uploadPath string) {
 		if file.Name() == "inp.mp3" {
 			continue
 		}
-		request, err := uploadSingle(file.Name(), issuedBy, uploadPath)
+		request, err := uploadSingle(file.Name(), issuedBy, uploadPath, cookie)
 		if err != nil {
 			j := jobs[jobID]
 			passToChannel(&j, "failed uploading")
@@ -48,7 +48,7 @@ func upload(jobID string, issuedBy string, uploadPath string) {
 
 }
 
-func uploadSingle(path string, issuedBy string, uploadPath string) (*http.Request, error) {
+func uploadSingle(path string, issuedBy string, uploadPath string, cookie *http.Cookie) (*http.Request, error) {
 	file, err := os.Open("./temp/" + path)
 	if err != nil {
 		return nil, err
@@ -78,5 +78,6 @@ func uploadSingle(path string, issuedBy string, uploadPath string) (*http.Reques
 	req, err := http.NewRequest("POST", url, body)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 	req.Header.Add("s2rj-access-token", config.AccessToken)
+	req.AddCookie(cookie)
 	return req, err
 }
