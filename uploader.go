@@ -65,7 +65,7 @@ func uploadSingle(path string, issuedBy string, uploadPath string) (*http.Reques
 
 	body := new(bytes.Buffer)
 	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile("track", fi.Name())
+	part, err := writer.CreateFormFile("file", fi.Name())
 	if err != nil {
 		return nil, err
 	}
