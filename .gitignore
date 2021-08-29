@@ -1,4 +1,4 @@
 *.mp3
 .config.json
 ffmpeg
-.config.json
+docker-compose.yml
