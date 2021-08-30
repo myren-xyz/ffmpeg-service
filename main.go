@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
@@ -14,12 +14,12 @@ func init() {
 	jobs = make(map[string]Job)
 	file, err := ioutil.ReadFile("./.config.json")
 	if err != nil {
-		fmt.Printf("error in reading json config file: %s\n", err)
+		log.Printf("error in reading json config file: %s\n", err)
 	}
 
 	err = json.Unmarshal(file, &config)
 	if err != nil {
-		fmt.Printf("error in unamarshalling: %s", err)
+		log.Printf("error in unamarshalling: %s", err)
 	}
 }
 

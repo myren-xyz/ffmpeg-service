@@ -64,7 +64,7 @@ func prune(path string) {
 }
 
 func createDir(name string) error {
-	err := os.Mkdir(name, 0755)
+	err := os.Mkdir(name, 0777)
 	if err != nil {
 		return err
 	}

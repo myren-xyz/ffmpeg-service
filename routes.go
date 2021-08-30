@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -11,7 +12,7 @@ func convertRoute(w http.ResponseWriter, r *http.Request) {
 	// tmpMAID cookie
 	tmpMAIDcookie, err := r.Cookie("tmpMAID")
 	if err != nil {
-		fmt.Println("Error getting tmpMAID cookie: ", err)
+		log.Println("Error getting tmpMAID cookie: ", err)
 		return
 	}
 
