@@ -5,10 +5,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func convertRoute(w http.ResponseWriter, r *http.Request) {
 	fileUrl := r.URL.Query().Get("file_url")
+
+	fileNameSlice := strings.Split(fileUrl, ".")
+	fileExt := fileNameSlice[len(fileNameSlice)-1]
+
 	// tmpMAID cookie
 	tmpMAIDcookie, err := r.Cookie("tmpMAID")
 	if err != nil {
@@ -27,7 +32,7 @@ func convertRoute(w http.ResponseWriter, r *http.Request) {
 		KillSig: make(chan bool, 1),
 	}
 
-	go startAct(fileUrl, newJobID, issuer, uploadPath, tmpMAIDcookie)
+	go startAct(fileUrl, newJobID, issuer, uploadPath, tmpMAIDcookie, fileExt)
 
 	jobs[newJobID] = job
 	j := jobs[newJobID]

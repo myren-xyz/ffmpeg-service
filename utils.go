@@ -36,16 +36,19 @@ func killSig(job *Job) {
 	}()
 }
 
-func startAct(url string, jobID string, issuedBy string, uploadPath string, cookie *http.Cookie) {
+func startAct(url string, jobID string, issuedBy string, uploadPath string, cookie *http.Cookie, fileExt string) {
 	for {
 		select {
 		case status := <-jobs[jobID].Status:
 			if status == "inq" {
 				go download(url, jobID)
 			} else if status == "fetched" {
-				go convertFile(jobID)
+				go convertFile(jobID, fileExt)
 			} else if status == "converted" {
 				go upload(jobID, issuedBy, uploadPath, cookie)
+			} else if status == "uploaded" {
+				go prune(jobID)
+				delete(jobs, jobID)
 			}
 		case <-jobs[jobID].KillSig:
 			prune(jobID)

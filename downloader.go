@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 )
 
 var (
@@ -14,7 +15,11 @@ var (
 
 func download(url string, jobID string) {
 	fullUrlFile = url
-	fileName = "inp.mp3"
+
+	fileNameSlice := strings.Split(url, ".")
+	fileExt := fileNameSlice[len(fileNameSlice)-1]
+
+	fileName = "inp." + fileExt
 
 	// Create blank file
 	err := createDir(jobID)

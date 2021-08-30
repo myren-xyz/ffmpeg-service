@@ -8,6 +8,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 func upload(jobID string, issuedBy string, uploadPath string, cookie *http.Cookie) {
@@ -18,11 +19,18 @@ func upload(jobID string, issuedBy string, uploadPath string, cookie *http.Cooki
 	}
 
 	for _, file := range files {
-		if file.Name() == "inp.mp3" {
+		fileExt := filepath.Ext(file.Name())
+		// if file extension was .ts or .m3u8 then upload it
+		if fileExt == ".ts" || fileExt == ".m3u8" {
+			msg := "gonna be uploaded"
+			log.Println(msg)
+		} else {
 			continue
 		}
-		request, err := uploadSingle(file.Name(), issuedBy, uploadPath, cookie)
+
+		request, err := uploadSingle(file.Name(), issuedBy, uploadPath, cookie, jobID)
 		if err != nil {
+			log.Println(err)
 			j := jobs[jobID]
 			passToChannel(&j, "failed uploading")
 			killSig(&j)
@@ -31,6 +39,7 @@ func upload(jobID string, issuedBy string, uploadPath string, cookie *http.Cooki
 		client := &http.Client{}
 		resp, err := client.Do(request)
 		if err != nil {
+			log.Println(err)
 			j := jobs[jobID]
 			passToChannel(&j, "failed uploading")
 			killSig(&j)
@@ -39,7 +48,6 @@ func upload(jobID string, issuedBy string, uploadPath string, cookie *http.Cooki
 			var bodyContent []byte
 			resp.Body.Read(bodyContent)
 			resp.Body.Close()
-			fmt.Println(bodyContent)
 		}
 	}
 
@@ -48,9 +56,11 @@ func upload(jobID string, issuedBy string, uploadPath string, cookie *http.Cooki
 
 }
 
-func uploadSingle(path string, issuedBy string, uploadPath string, cookie *http.Cookie) (*http.Request, error) {
-	file, err := os.Open("./temp/" + path)
+func uploadSingle(path string, issuedBy string, uploadPath string, cookie *http.Cookie, jobID string) (*http.Request, error) {
+	fpath := fmt.Sprintf("./%s/%s", jobID, path)
+	file, err := os.Open(fpath)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	fileContents, err := ioutil.ReadAll(file)
