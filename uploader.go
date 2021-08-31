@@ -87,6 +87,7 @@ func uploadSingle(path string, issuedBy string, uploadPath string, cookie *http.
 	url := fmt.Sprintf("https://s2rj.myren.xyz/api/v1/upload?issued_by=%s&path=%s", issuedBy, uploadPath)
 	req, err := http.NewRequest("POST", url, body)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
+	req.Header.Add("Origin", "https://utils.myren.xyz")
 	req.Header.Add("s2rj-access-token", config.AccessToken)
 	req.AddCookie(cookie)
 	return req, err
