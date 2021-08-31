@@ -24,7 +24,7 @@ func init() {
 }
 
 func main() {
-	http.HandleFunc("/ffmpeg/api/v1/convert", convertRoute)
-	http.HandleFunc("/ffmpeg/api/v1/subscribe", subscribe)
+	http.HandleFunc("/ffmpeg/api/v1/convert", cors(convertRoute))
+	http.HandleFunc("/ffmpeg/api/v1/subscribe", cors(subscribe))
 	http.ListenAndServe(":8080", nil)
 }
