@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 var config Config
@@ -24,7 +26,8 @@ func init() {
 }
 
 func main() {
-	http.HandleFunc("/ffmpeg/api/v1/convert", cors(convertRoute))
-	http.HandleFunc("/ffmpeg/api/v1/subscribe", cors(subscribe))
+	r := mux.NewRouter()
+	r.HandleFunc("/ffmpeg/api/v1/convert/{file-path}/{upload-path}", cors(convertRoute))
+	r.HandleFunc("/ffmpeg/api/v1/subscribe/{job-id}", cors(subscribe))
 	http.ListenAndServe(":8080", nil)
 }
