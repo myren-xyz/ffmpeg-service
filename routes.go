@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
@@ -22,7 +21,8 @@ func convertRoute(w http.ResponseWriter, r *http.Request) {
 	// tmpMAID cookie
 	tmpMAIDcookie, err := r.Cookie("tmpMAID")
 	if err != nil {
-		log.Println("Error getting tmpMAID cookie: ", err)
+		// return unauthorized
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
@@ -45,6 +45,9 @@ func convertRoute(w http.ResponseWriter, r *http.Request) {
 		OK:    true,
 		JobID: newJobID,
 	}
+
+	// return http created status
+	w.WriteHeader(http.StatusCreated)
 	fmt.Fprint(w, res.toStr())
 }
 
