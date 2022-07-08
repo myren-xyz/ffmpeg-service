@@ -31,7 +31,9 @@ func upload(jobID string, issuedBy string, uploadPath string, cookie *http.Cooki
 		request, err := uploadSingle(file.Name(), issuedBy, uploadPath, cookie, jobID)
 		if err != nil {
 			log.Println(err)
-			j := jobs[jobID]
+			jobs.RLock()
+			j := jobs.store[jobID]
+			jobs.RUnlock()
 			passToChannel(&j, "failed uploading")
 			killSig(&j)
 			return
@@ -40,7 +42,9 @@ func upload(jobID string, issuedBy string, uploadPath string, cookie *http.Cooki
 		resp, err := client.Do(request)
 		if err != nil {
 			log.Println(err)
-			j := jobs[jobID]
+			jobs.RLock()
+			j := jobs.store[jobID]
+			jobs.RUnlock()
 			passToChannel(&j, "failed uploading")
 			killSig(&j)
 			return
@@ -51,7 +55,9 @@ func upload(jobID string, issuedBy string, uploadPath string, cookie *http.Cooki
 		}
 	}
 
-	j := jobs[jobID]
+	jobs.RLock()
+	j := jobs.store[jobID]
+	jobs.RUnlock()
 	passToChannel(&j, "uploaded")
 
 }
