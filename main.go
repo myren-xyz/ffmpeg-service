@@ -27,7 +27,7 @@ func init() {
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/ffmpeg/api/v1/convert/{issuer}/{file-path}/{upload-path}", cors(convertRoute))
-	r.HandleFunc("/ffmpeg/api/v1/subscribe/{job-id}", cors(subscribe))
+	r.HandleFunc("/ffmpeg/api/v1/convert/{issuer}/{file-path}/{upload-path}", cors(convertRoute)).Methods("PUT")
+	r.HandleFunc("/ffmpeg/api/v1/subscribe/{job-id}", cors(subscribe)).Methods("GET")
 	http.ListenAndServe(":8080", nil)
 }
