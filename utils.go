@@ -39,7 +39,7 @@ func killSig(job *Job) {
 func startAct(url string, jobID string, issuedBy string, uploadPath string, cookie *http.Cookie, fileExt string) {
 	for {
 		select {
-		case status := <-jobs[jobID].Status:
+		case status := <-jobs.store[jobID].Status:
 			if status == "inq" {
 				go download(url, jobID)
 			} else if status == "fetched" {
@@ -48,11 +48,15 @@ func startAct(url string, jobID string, issuedBy string, uploadPath string, cook
 				go upload(jobID, issuedBy, uploadPath, cookie)
 			} else if status == "uploaded" {
 				go prune(jobID)
-				delete(jobs, jobID)
+				jobs.Lock()
+				delete(jobs.store, jobID)
+				jobs.Unlock()
 			}
-		case <-jobs[jobID].KillSig:
+		case <-jobs.store[jobID].KillSig:
 			prune(jobID)
-			delete(jobs, jobID)
+			jobs.Lock()
+			delete(jobs.store, jobID)
+			jobs.Unlock()
 		}
 	}
 }
