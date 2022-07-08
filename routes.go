@@ -6,10 +6,15 @@ import (
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 func convertRoute(w http.ResponseWriter, r *http.Request) {
-	fileUrl := r.URL.Query().Get("file_url")
+	vars := mux.Vars(r)
+	fileUrl := vars["file-path"]
+	uploadPath := vars["upload-path"]
+	issuer := vars["issuer"]
 
 	fileNameSlice := strings.Split(fileUrl, ".")
 	fileExt := fileNameSlice[len(fileNameSlice)-1]
@@ -23,8 +28,6 @@ func convertRoute(w http.ResponseWriter, r *http.Request) {
 
 	// issuer should be passed when converting and uploading has been finished
 	// should return job id
-	uploadPath := r.URL.Query().Get("upload_path")
-	issuer := r.URL.Query().Get("issuer")
 	newJobID := generateSeq(6)
 	job := Job{
 		Status:  make(chan string, 1),
