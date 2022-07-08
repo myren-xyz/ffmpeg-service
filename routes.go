@@ -37,8 +37,14 @@ func convertRoute(w http.ResponseWriter, r *http.Request) {
 
 	go startAct(fileUrl, newJobID, issuer, uploadPath, tmpMAIDcookie, fileExt)
 
-	jobs[newJobID] = job
-	j := jobs[newJobID]
+	jobs.Lock()
+	jobs.store[newJobID] = job
+	jobs.Unlock()
+
+	jobs.RLock()
+	j := jobs.store[newJobID]
+	jobs.RUnlock()
+
 	passToChannel(&j, "inq")
 
 	res := Response{
@@ -64,7 +70,7 @@ func subscribe(w http.ResponseWriter, r *http.Request) {
 	// 	// no jobs availavle with this jobID
 	// }
 	select {
-	case e := <-jobs[jobID].Notify:
+	case e := <-jobs.store[jobID].Notify:
 		mar, _ := json.Marshal(e)
 		fmt.Fprintf(w, "data: %s\n\n", string(mar))
 	}
