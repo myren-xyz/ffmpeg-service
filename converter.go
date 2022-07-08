@@ -13,12 +13,16 @@ func convertFile(jobID string, fileExt string) {
 	_, err := cmd.Output()
 
 	if err != nil {
-		j := jobs[jobID]
+		jobs.RLock()
+		j := jobs.store[jobID]
+		jobs.RUnlock()
 		passToChannel(&j, "failed converting")
 		killSig(&j)
 		return
 	}
 
-	j := jobs[jobID]
+	jobs.RLock()
+	j := jobs.store[jobID]
+	jobs.RUnlock()
 	passToChannel(&j, "converted")
 }
