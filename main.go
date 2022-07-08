@@ -5,15 +5,18 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/gorilla/mux"
 )
 
 var config Config
-var jobs map[string]Job
+var jobs = struct {
+	sync.RWMutex
+	store map[string]Job
+}{store: make(map[string]Job)}
 
 func init() {
-	jobs = make(map[string]Job)
 	file, err := ioutil.ReadFile("./.config.json")
 	if err != nil {
 		log.Printf("error in reading json config file: %s\n", err)
