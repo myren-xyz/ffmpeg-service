@@ -24,7 +24,9 @@ func download(url string, jobID string) {
 	// Create blank file
 	err := createDir(jobID)
 	if err != nil {
-		j := jobs[jobID]
+		jobs.RLock()
+		j := jobs.store[jobID]
+		jobs.RUnlock()
 		passToChannel(&j, "failed fetching")
 		killSig(&j)
 		return
@@ -35,13 +37,17 @@ func download(url string, jobID string) {
 	// Put content on file
 	err = putFile(file, httpClient())
 	if err != nil {
-		j := jobs[jobID]
+		jobs.RLock()
+		j := jobs.store[jobID]
+		jobs.RUnlock()
 		passToChannel(&j, "failed fetching")
 		killSig(&j)
 		return
 	}
 
-	j := jobs[jobID]
+	jobs.RLock()
+	j := jobs.store[jobID]
+	jobs.RUnlock()
 	passToChannel(&j, "fetched")
 }
 
