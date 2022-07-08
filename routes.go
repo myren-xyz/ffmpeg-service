@@ -65,7 +65,9 @@ func subscribe(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 
-	jobID := r.URL.Query().Get("job_id")
+	vars := mux.Vars(r)
+
+	jobID := vars["job-id"]
 	// if jobs[jobID] == (Job{}) {
 	// 	// no jobs availavle with this jobID
 	// }
